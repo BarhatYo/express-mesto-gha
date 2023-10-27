@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+const { BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR } = require('../constants/statusCodes');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -15,7 +16,7 @@ const getCards = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send({ message: 'Ошибка на стороне сервера' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
@@ -37,10 +38,10 @@ const createCard = (req, res) => {
       console.error(err);
       if (err.name === 'ValidationError') {
         return res
-          .status(400).send({ message: 'Переданы некорректные данные в метод создания карточки' });
+          .status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в метод создания карточки' });
       }
       return res
-        .status(500).send({ message: err.message });
+        .status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 
@@ -52,14 +53,14 @@ const deleteCard = (req, res) => {
       console.error(err);
       if (err.message === 'NotFound') {
         return res
-          .status(404).send({ message: 'Карточка не найдена' });
+          .status(NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       if (err.name === 'CastError') {
         return res
-          .status(400).send({ message: 'Передан невалидный ID' });
+          .status(BAD_REQUEST).send({ message: 'Передан невалидный ID' });
       }
       return res
-        .status(500).send({ message: err.message });
+        .status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 
@@ -84,14 +85,14 @@ const likeCard = (req, res) => {
       console.error(err);
       if (err.message === 'NotFound') {
         return res
-          .status(404).send({ message: 'Карточка не найдена' });
+          .status(NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       if (err.name === 'CastError') {
         return res
-          .status(400).send({ message: 'Передан невалидный ID' });
+          .status(BAD_REQUEST).send({ message: 'Передан невалидный ID' });
       }
       return res
-        .status(500).send({ message: err.message });
+        .status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 
@@ -116,14 +117,14 @@ const unlikeCard = (req, res) => {
       console.error(err);
       if (err.message === 'NotFound') {
         return res
-          .status(404).send({ message: 'Карточка не найдена' });
+          .status(NOT_FOUND).send({ message: 'Карточка не найдена' });
       }
       if (err.name === 'CastError') {
         return res
-          .status(400).send({ message: 'Передан невалидный ID' });
+          .status(BAD_REQUEST).send({ message: 'Передан невалидный ID' });
       }
       return res
-        .status(500).send({ message: err.message });
+        .status(INTERNAL_SERVER_ERROR).send({ message: err.message });
     });
 };
 

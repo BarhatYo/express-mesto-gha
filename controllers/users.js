@@ -1,8 +1,7 @@
 const User = require('../models/user');
-
-// const BAD_REQUEST = 400;
-// const NOT_FOUND = 404;
-// const SERVER_ERROR = 500;
+const {
+  CREATED, BAD_REQUEST, NOT_FOUND, INTERNAL_SERVER_ERROR,
+} = require('../constants/statusCodes');
 
 const getUsers = (req, res) => {
   User.find({})
@@ -17,7 +16,7 @@ const getUsers = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      res.status(500).send({ message: 'Ошибка на стороне сервера' });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
@@ -38,21 +37,21 @@ const getUser = (req, res) => {
       console.error(err);
       if (err.message === 'NotFound') {
         return res
-          .status(404).send({ message: 'Пользователь по ID не найден' });
+          .status(NOT_FOUND).send({ message: 'Пользователь по ID не найден' });
       }
       if (err.name === 'CastError') {
         return res
-          .status(400).send({ message: 'Передан невалидный ID' });
+          .status(BAD_REQUEST).send({ message: 'Передан невалидный ID' });
       }
       return res
-        .status(500).send({ message: 'Ошибка на стороне сервера' });
+        .status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({
+    .then((user) => res.status(CREATED).send({
       data: {
         _id: user._id,
         name: user.name,
@@ -64,10 +63,10 @@ const createUser = (req, res) => {
       console.error(err);
       if (err.name === 'ValidationError') {
         return res
-          .status(400).send({ message: 'Переданы некорректные данные в метод создания пользователя' });
+          .status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в метод создания пользователя' });
       }
       return res
-        .status(500).send({ message: 'Ошибка на стороне сервера' });
+        .status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
@@ -90,10 +89,10 @@ const updateUser = (req, res) => {
       console.error(err);
       if (err.name === 'ValidationError') {
         return res
-          .status(400).send({ message: 'Переданы некорректные данные в метод обновления профиля' });
+          .status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в метод обновления профиля' });
       }
       return res
-        .status(500).send({ message: 'Ошибка на стороне сервера' });
+        .status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
@@ -116,10 +115,10 @@ const updateAvatar = (req, res) => {
       console.error(err);
       if (err.name === 'ValidationError') {
         return res
-          .status(400).send({ message: 'Переданы некорректные данные в метод обновления аватара' });
+          .status(BAD_REQUEST).send({ message: 'Переданы некорректные данные в метод обновления аватара' });
       }
       return res
-        .status(500).send({ message: 'Ошибка на стороне сервера' });
+        .status(INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на стороне сервера' });
     });
 };
 
