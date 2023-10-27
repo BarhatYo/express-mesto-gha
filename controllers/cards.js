@@ -13,36 +13,31 @@ const getCards = (req, res) => {
       }));
       res.send({ data: formattedCards });
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send({ message: 'Ошибка на стороне сервера' });
+    });
 };
 
 const createCard = (req, res) => {
   const owner = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner })
-    .then((card) => {
-      if (!card) {
-        throw new Error('NotFound');
-      }
-      res.send({
-        data: {
-          likes: card.likes,
-          _id: card._id,
-          name: card.name,
-          link: card.link,
-          createdAt: card.createdAt,
-          owner: card.owner,
-        },
-      });
-    })
+    .then((card) => res.send({
+      data: {
+        likes: card.likes,
+        _id: card._id,
+        name: card.name,
+        link: card.link,
+        createdAt: card.createdAt,
+        owner: card.owner,
+      },
+    }))
     .catch((err) => {
-      if (err.message === 'NotFound') {
+      console.error(err);
+      if (err.name === 'ValidationError') {
         return res
-          .status(404).send({ message: 'Карточка не найдена' });
-      }
-      if (err.name === 'CastError') {
-        return res
-          .status(400).send({ message: 'Передан невалидный ID' });
+          .status(400).send({ message: 'Переданы некорректные данные в метод создания карточки' });
       }
       return res
         .status(500).send({ message: err.message });
@@ -51,15 +46,10 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
-  Card.findByIdAndDelete(cardId)
-    .then((card) => res.send({ data: card }))
-    .then((card) => {
-      if (!card) {
-        throw new Error('NotFound');
-      }
-      res.send({ message: 'Пост удалён' });
-    })
+  Card.findByIdAndDelete(cardId).orFail(new Error('NotFound'))
+    .then(() => res.send({ message: 'Пост удалён' }))
     .catch((err) => {
+      console.error(err);
       if (err.message === 'NotFound') {
         return res
           .status(404).send({ message: 'Карточка не найдена' });
@@ -79,24 +69,19 @@ const likeCard = (req, res) => {
     cardId,
     { $addToSet: { likes: cardId } },
     { new: true },
-  )
-    .then((card) => res.send({ data: card }))
-    .then((card) => {
-      if (!card) {
-        throw new Error('NotFound');
-      }
-      res.send({
-        data: {
-          likes: card.likes,
-          _id: card._id,
-          name: card.name,
-          link: card.link,
-          createdAt: card.createdAt,
-          owner: card.owner,
-        },
-      });
-    })
+  ).orFail(new Error('NotFound'))
+    .then((card) => res.send({
+      data: {
+        likes: card.likes,
+        _id: card._id,
+        name: card.name,
+        link: card.link,
+        createdAt: card.createdAt,
+        owner: card.owner,
+      },
+    }))
     .catch((err) => {
+      console.error(err);
       if (err.message === 'NotFound') {
         return res
           .status(404).send({ message: 'Карточка не найдена' });
@@ -116,24 +101,19 @@ const unlikeCard = (req, res) => {
     cardId,
     { $pull: { likes: cardId } },
     { new: true },
-  )
-    .then((card) => res.send({ data: card }))
-    .then((card) => {
-      if (!card) {
-        throw new Error('NotFound');
-      }
-      res.send({
-        data: {
-          likes: card.likes,
-          _id: card._id,
-          name: card.name,
-          link: card.link,
-          createdAt: card.createdAt,
-          owner: card.owner,
-        },
-      });
-    })
+  ).orFail(new Error('NotFound'))
+    .then((card) => res.send({
+      data: {
+        likes: card.likes,
+        _id: card._id,
+        name: card.name,
+        link: card.link,
+        createdAt: card.createdAt,
+        owner: card.owner,
+      },
+    }))
     .catch((err) => {
+      console.error(err);
       if (err.message === 'NotFound') {
         return res
           .status(404).send({ message: 'Карточка не найдена' });
