@@ -1,11 +1,18 @@
+require('dotenv/config');
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const { NOT_FOUND } = require('./constants/statusCodes');
+const auth = require('./middlewares/auth');
+const { login, createUser } = require('./controllers/users');
+const { celebrate, Joi, errors } = require('celebrate');
 
 const app = express();
 const { PORT = 3000 } = process.env;
 
 app.use(express.json());
+app.use(cookieParser());
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   useNewUrlParser: true,
@@ -14,19 +21,40 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   .then(() => console.log('Connected to MongoDB'))
   .catch((error) => console.error('Error connecting to MongoDB', error));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '653a27ce8b6984f197836845',
-  };
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required().min(2),
+    password: Joi.string().required().min(2),
+  }),
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required().min(2),
+    password: Joi.string().required().min(2),
+  }),
+}), createUser);
 
-  next();
-});
+app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Страница не найдена' });
+  res.status(NOT_FOUND).send({ message: 'Страница не найдена' });
+});
+
+app.use(errors());
+
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  console.log(err);
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
