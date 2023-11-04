@@ -3,8 +3,6 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 const BadRequest = require('../utils/BadRequest');
 
-const avatarUrlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9.-]+)(\/[a-zA-Z0-9.-]*)*\/?$/;
-
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
