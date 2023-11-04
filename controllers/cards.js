@@ -42,12 +42,12 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findById(cardId).orFail(new Error('NotFound'))
+  Card.findById(cardId).orFail(new NotFound('Карточка не найдена'))
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
         throw new BadRequest('Вы не являетесь владельцем карточки');
       }
-      return Card.findByIdAndDelete(cardId)
+      return Card.deleteOne({ cardId })
         .then(() => res.send({ message: 'Пост удалён' }))
         .catch(next);
     })

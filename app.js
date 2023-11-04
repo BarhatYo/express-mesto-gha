@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const { NOT_FOUND } = require('./constants/statusCodes');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
+const NotFound = require('./utils/NotFound');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -24,7 +25,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required().min(2),
-    password: Joi.string().required().min(2),
+    password: Joi.string().required(),
   }),
 }), login);
 app.post('/signup', celebrate({
@@ -39,8 +40,9 @@ app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use((req, res) => {
-  res.status(NOT_FOUND).send({ message: 'Страница не найдена' });
+app.use((req, res, next) => {
+  const error = new NotFound('Страница не найдена');
+  next(error);
 });
 
 app.use(errors());

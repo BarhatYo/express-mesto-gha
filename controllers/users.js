@@ -3,7 +3,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const { CREATED, SUCCESS } = require('../constants/statusCodes');
+const { CREATED } = require('../constants/statusCodes');
 
 const BadRequest = require('../utils/BadRequest');
 const Conflict = require('../utils/ConflictError');
@@ -25,7 +25,7 @@ const getUsers = (req, res, next) => {
 
 const getUser = (req, res, next) => {
   const { userId } = req.params;
-  User.findById(userId).orFail(new Error('NotFound'))
+  User.findById(userId).orFail(new NotFound('Нет пользователя с таким id'))
     .then((user) => {
       res.send({
         data: {
@@ -145,7 +145,6 @@ const login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res.cookie('jwt', token, { maxAge: 3600000, httpOnly: true, sameSite: true });
-      res.status(SUCCESS).send({ token });
     })
     .catch(next);
 };
