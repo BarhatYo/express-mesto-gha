@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const BadRequest = require('../utils/BadRequest');
 const NotFound = require('../utils/NotFound');
+const Forbidden = require('../utils/Forbidden');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -45,7 +46,7 @@ const deleteCard = (req, res, next) => {
   Card.findById(cardId).orFail(new NotFound('Карточка не найдена'))
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
-        throw new BadRequest('Вы не являетесь владельцем карточки');
+        throw new Forbidden('Вы не являетесь владельцем карточки');
       }
       return Card.deleteOne({ cardId })
         .then(() => res.send({ message: 'Пост удалён' }))
