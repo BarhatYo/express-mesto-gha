@@ -4,7 +4,6 @@ const path = require('path');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
-const { NOT_FOUND } = require('./constants/statusCodes');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const NotFound = require('./utils/NotFound');

@@ -37,9 +37,6 @@ const getUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        return next(new NotFound('Нет пользователя с таким id'));
-      }
       if (err.name === 'CastError') {
         return next(new BadRequest('Передан невалидный ID'));
       }
@@ -145,6 +142,7 @@ const login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res.cookie('jwt', token, { maxAge: 3600000, httpOnly: true, sameSite: true });
+      res.end(JSON.stringify({ message: 'Авторизация успешна' }));
     })
     .catch(next);
 };

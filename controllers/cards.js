@@ -52,9 +52,6 @@ const deleteCard = (req, res, next) => {
         .catch(next);
     })
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        return next(new NotFound('Карточка не найдена'));
-      }
       if (err.name === 'CastError') {
         return next(new BadRequest('Передан невалидный ID'));
       }
@@ -80,9 +77,6 @@ const likeCard = (req, res, next) => {
       },
     }))
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        return next(new NotFound('Карточка не найдена'));
-      }
       if (err.name === 'CastError') {
         return next(new BadRequest('Передан невалидный ID'));
       }
@@ -108,9 +102,6 @@ const unlikeCard = (req, res, next) => {
       },
     }))
     .catch((err) => {
-      if (err.message === 'NotFound') {
-        return next(new NotFound('Карточка не найдена'));
-      }
       if (err.name === 'CastError') {
         return next(new BadRequest('Передан невалидный ID'));
       }
