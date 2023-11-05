@@ -4,17 +4,12 @@ const {
   getCards, createCard, deleteCard, likeCard, unlikeCard,
 } = require('../controllers/cards');
 
-const linkValidator = (value) => {
-  const regex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-  return regex.test(value);
-};
-
 router.get('/', getCards);
 
 router.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).required(),
-    link: Joi.string().custom(linkValidator, 'custom validation').required(),
+    link: Joi.string().pattern(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,8})([/\w .-]*)*\/?$/).required(),
   }),
 }), createCard);
 
