@@ -111,17 +111,25 @@ const updateAvatar = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { email, password } = req.body;
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
 
   bcrypt.hash(toString(password), 10)
     .then((hash) => User.create({
       email,
       password: hash,
+      name,
+      about,
+      avatar,
     }))
     .then((user) => {
       res.status(CREATED).send({
         _id: user._id,
         email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
       });
     })
     .catch((err) => {
