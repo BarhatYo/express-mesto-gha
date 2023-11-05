@@ -1,7 +1,7 @@
 class Conflict extends Error {
   constructor(message) {
     super(message);
-    this.message = 'Дубль';
+    this.message = 'Пользователь с таким email уже зарегистрирован';
     this.statusCode = 409;
   }
 }

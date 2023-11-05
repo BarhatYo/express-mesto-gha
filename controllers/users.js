@@ -126,7 +126,7 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        return next(new Conflict('Данный email уже зарегистрирован'));
+        return next(new Conflict('Пользователь с таким email уже зарегистрирован'));
       }
       return next(err);
     });
