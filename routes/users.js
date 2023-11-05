@@ -22,8 +22,8 @@ router.get('/:userId', celebrate({
 
 router.patch('/me', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2), // Поле не должно быть обязательным, так как используется метод patch
-    about: Joi.string().min(2), // Не должно быть обязательным, так как используется метод patch
+    name: Joi.string().min(2).max(30), // Поле не должно быть обязательным, так как метод patch
+    about: Joi.string().min(2).max(30), // Не должно быть обязательным, так как метод patch
   }),
 }), updateUser);
 

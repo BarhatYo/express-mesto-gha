@@ -31,8 +31,8 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required().min(2),
     password: Joi.string().required().min(2),
-    name: Joi.string().min(2), // Поле необязательно, так как его нет при авторизации
-    about: Joi.string().min(2), // Поле необязательно, так как его нет при авторизации
+    name: Joi.string().min(2).max(30), // Поле необязательно, так как его нет при авторизации
+    about: Joi.string().min(2).max(30), // Поле необязательно, так как его нет при авторизации
     avatar: Joi.string().pattern(/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,8})([/\w .-]*)*\/?$/), // Поле необязательно, так как его нет при авторизации
   }),
 }), createUser);
