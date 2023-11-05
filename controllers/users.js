@@ -3,7 +3,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const { CREATED } = require('../constants/statusCodes');
+const { CREATED, SUCCESS } = require('../constants/statusCodes');
 
 const BadRequest = require('../utils/BadRequest');
 const Conflict = require('../utils/ConflictError');
@@ -141,8 +141,8 @@ const login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
-      res.cookie('jwt', token, { maxAge: 3600000, httpOnly: true, sameSite: true });
-      res.end(JSON.stringify({ message: 'Авторизация успешна' }));
+      res.cookie('jwt', token, { maxAge: 3600000, httpOnly: true, sameSite: true })
+      res.status(SUCCESS).send({ message: 'Авторизация успешна' });;
     })
     .catch(next);
 };
