@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const NotFound = require('./utils/NotFound');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -20,6 +21,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 })
   .then(() => console.log('Connected to MongoDB'))
   .catch((error) => console.error('Error connecting to MongoDB', error));
+
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -46,6 +49,8 @@ app.use((req, res, next) => {
   const error = new NotFound('Страница не найдена');
   next(error);
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 
